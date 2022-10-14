@@ -6,6 +6,7 @@ public class Main {
         H2Utils.setName(args);
 
         H2Utils.createDb();
+        H2Utils.createTableCar();
         Menu.process();
     }
 }
