@@ -6,7 +6,6 @@ import carsharing.domain.Car;
 import carsharing.domain.Company;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
@@ -117,21 +116,12 @@ public class Menu {
 
     private static boolean showCars(Company company) {
         List<Car> list = cars.findByCompany(company);
-        Optional<Company> byId = companies.findById(company.getId());
-        Company thisCompany = byId.get();
-
         if (list.isEmpty()) {
             System.out.println("\nThe car list is empty!\n");
         }
-
-        for (Car car : list) {
-            if (car.getCompanyId() == thisCompany.getId()) {
-                IntStream.iterate(1, i -> i <= list.size(), i -> i + 1)
+            IntStream.iterate(1, i -> i <= list.size(), i -> i + 1)
                         .forEach(i -> System.out.printf("%d. %s%n", i, list.get(i - 1)
                                 .getName()));
-            }
-        }
-
         return true;
     }
 
@@ -149,9 +139,9 @@ public class Menu {
 
     private static void showCompanies() {
         List<Company> list = companies.findAll();
-            IntStream.iterate(1, i -> i <= list.size(), i -> i + 1)
-                    .forEach(i -> System.out.printf("%d. %s%n", i, list.get(i - 1)
-                            .getName()));
+        IntStream.iterate(1, i -> i <= list.size(), i -> i + 1)
+                .forEach(i -> System.out.printf("%d. %s%n", i, list.get(i - 1)
+                        .getName()));
 
     }
 
