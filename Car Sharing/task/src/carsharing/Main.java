@@ -7,6 +7,7 @@ public class Main {
 
         H2Utils.createDb();
         H2Utils.createTableCar();
+        H2Utils.createTableCustomer();
         Menu.process();
     }
 }
