@@ -10,7 +10,7 @@ public class H2Utils {
     private static final String JDBC_DRIVER = "org.h2.Driver";
     private static final String DB_URL = "jdbc:h2:./src/carsharing/db/";
 
-    private static String dbName = "carsharing.mv.db";
+    private static String dbName = "carsharing";
 
     public static void setName(String[] args) {
         if (args.length != 0 && Optional.of(args[0])
@@ -23,18 +23,21 @@ public class H2Utils {
     public static void createDb() {
         String drop = "DROP TABLE IF EXISTS COMPANY";
         String dropCarTable = "DROP TABLE IF EXISTS CAR";
-        String dropCustomerTable = "DROP TABLE IF EXISTS CAR";
+        String dropCustomerTable = "DROP TABLE IF EXISTS CUSTOMER";
 
         String sqlCompany = "CREATE TABLE IF NOT EXISTS COMPANY " +
                 "(ID INTEGER PRIMARY KEY AUTO_INCREMENT, " +
                 "NAME VARCHAR(255) UNIQUE NOT NULL )";
 
+        String alterColumnIdCompany = "ALTER TABLE COMPANY ALTER COLUMN ID RESTART WITH 1";
+
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
-            stmt.execute(dropCustomerTable);
-            stmt.execute(dropCarTable);
-            stmt.execute(drop);
+//            stmt.execute(dropCustomerTable);
+//            stmt.execute(dropCarTable);
+//            stmt.execute(drop);
             stmt.executeUpdate(sqlCompany);
+            stmt.executeUpdate(alterColumnIdCompany);
         } catch (SQLException e) {
             System.out.println("SQL exception while executing update on table Company");
         }

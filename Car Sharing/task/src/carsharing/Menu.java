@@ -7,7 +7,9 @@ import carsharing.domain.Car;
 import carsharing.domain.Company;
 import carsharing.domain.Customer;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
@@ -124,19 +126,21 @@ public class Menu {
     }
 
     private static void processSelectionOfCarMenu(Customer customer, Company company) {
-        final List<Car> allCompanyCars = cars.findByCompany(company);
-        if (allCompanyCars.isEmpty()) {
-            System.out.printf("%nNo available cars in the %s company.%n",company.getName());
+        List<Car> availableCars = getCars(company);
+        if (availableCars == null) {
             return;
         }
+
         System.out.println("Choose a car:");
-        showCars(company);
+
+        availableCars.forEach(car -> System.out.printf("%d. %s%n", car.getId(), car.getName()));
+
         System.out.println("0. Back");
         int customerOption = sc.nextInt();
-        for (Car car : allCompanyCars) {
+        for (Car car : availableCars) {
             if (customerOption == car.getId()) {
                 customers.insertRentedCar(customer,car.getId());
-                System.out.printf("You rented %s%n", car.getName());
+                System.out.printf("You rented '%s'%n", car.getName());
                 processSingleCustomerMenu(new Customer(customer.getId(), customer.getName(), car.getId()));
             }
             if (customerOption == 0) {
@@ -144,6 +148,26 @@ public class Menu {
             }
         }
 
+    }
+
+    private static List<Car> getCars(Company company) {
+        List<Integer> allRentedCarsId = customers.findAllRentedCars();
+        List<Car> companyCars = cars.findByCompany(company);
+        List<Car> availableCars = new ArrayList<>();
+        for (var car: companyCars) {
+            long result = allRentedCarsId.stream()
+                                         .filter(id -> car.getId() == id)
+                                         .count();
+            if(result != 1){
+                availableCars.add(car);
+            }
+        }
+
+        if (availableCars.isEmpty()) {
+            System.out.printf("%nNo available cars in the %s company.%n", company.getName());
+            return null;
+        }
+        return availableCars;
     }
 
     private static void returnRentedCar(Customer customer) {

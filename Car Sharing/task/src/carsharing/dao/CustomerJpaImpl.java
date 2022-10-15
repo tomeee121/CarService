@@ -16,6 +16,8 @@ public class CustomerJpaImpl implements Jpa<Customer>{
     private static final String SELECT_FROM_CUSTOMER_TABLE = "SELECT * FROM CUSTOMER";
     private static final String WHERE_NAME = " WHERE NAME =?";
     private static final String WHERE_ID = " WHERE ID =?";
+    private static final String WHERE_RENTED_ID_GREATER_THAN = " WHERE RENTED_CAR_ID > ?";
+
     private static final String INSERT_NAME_INTO_CUSTOMER_TABLE = "INSERT INTO CUSTOMER(NAME, RENTED_CAR_ID)" +
             " VALUES (?,?);";
 
@@ -118,5 +120,19 @@ public class CustomerJpaImpl implements Jpa<Customer>{
             System.out.println("Exception occurred while updating customer rented car to null");
         }
         return false;
+    }
+
+    public List<Integer> findAllRentedCars() {
+        List<Integer> rentedCars = new ArrayList<>();
+        try (final PreparedStatement ps = connection.prepareStatement("SELECT RENTED_CAR_ID FROM CUSTOMER" + WHERE_RENTED_ID_GREATER_THAN)){
+            ps.setInt(1,0);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                rentedCars.add(rs.getInt(1));
+            }
+        } catch (SQLException e) {
+            System.out.println("Exception occurred while taking rented cars from customer list");
+        }
+        return rentedCars;
     }
 }
